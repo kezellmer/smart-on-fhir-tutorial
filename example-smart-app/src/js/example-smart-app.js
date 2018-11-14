@@ -27,7 +27,12 @@
         $.when(pt, obv).done(function(patient, obv) {
           var byCodes = smart.byCodes(obv, 'code');
           var gender = patient.gender;
+          var dob = new Date(patient.birthDate);
+          var day = dob.getDate();
+          var monthIndex = dob.getMonth() + 1;
+          var year = dob.getFullYear();
 
+          var dobStr = monthIndex + '/' + day + '/' + year;
           var fname = '';
           var lname = '';
 
@@ -43,11 +48,15 @@
           var ldl = byCodes('2089-1');
 
           var p = defaultPatient();
-          p.birthdate = patient.birthDate;
+          p.birthdate = dobStr;
           p.gender = gender;
           p.fname = fname;
           p.lname = lname;
-          p.height = getQuantityValueAndUnit(height[0]);
+          p.age = parseInt(calculateAge(dob));
+
+          if(typeof height[0] != 'undefined' && typeof height[0].valueQuantity.value != 'undefined' && typeof height[0].valueQuantity.unit != 'undefined') {
+            p.height = height[0].valueQuantity.value + ' ' + height[0].valueQuantity.unit;
+          }
 
           if (typeof systolicbp != 'undefined')  {
             p.systolicbp = systolicbp;
@@ -60,6 +69,15 @@
           p.hdl = getQuantityValueAndUnit(hdl[0]);
           p.ldl = getQuantityValueAndUnit(ldl[0]);
 
+          ret.resolve(p);
+
+          if(typeof hdl[0] != 'undefined' && typeof hdl[0].valueQuantity.value != 'undefined' && typeof hdl[0].valueQuantity.unit != 'undefined') {
+            p.hdl = hdl[0].valueQuantity.value + ' ' + hdl[0].valueQuantity.unit;
+          }
+
+          if(typeof ldl[0] != 'undefined' && typeof ldl[0].valueQuantity.value != 'undefined' && typeof ldl[0].valueQuantity.unit != 'undefined') {
+            p.ldl = ldl[0].valueQuantity.value + ' ' + ldl[0].valueQuantity.unit;
+          }
           ret.resolve(p);
         });
       } else {
@@ -121,6 +139,7 @@
     $('#lname').html(p.lname);
     $('#gender').html(p.gender);
     $('#birthdate').html(p.birthdate);
+    $('#age').html(p.age);
     $('#height').html(p.height);
     $('#systolicbp').html(p.systolicbp);
     $('#diastolicbp').html(p.diastolicbp);
