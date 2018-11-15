@@ -21,7 +21,6 @@
                       }
                     }
                   });
-
         $.when(pt, obv).fail(onError);
 
         $.when(pt, obv).done(function(patient, obv) {
@@ -52,7 +51,6 @@
           p.gender = gender;
           p.fname = fname;
           p.lname = lname;
-          p.age = parseInt(calculateAge(dob));
 
           if(typeof height[0] != 'undefined' && typeof height[0].valueQuantity.value != 'undefined' && typeof height[0].valueQuantity.unit != 'undefined') {
             p.height = height[0].valueQuantity.value + ' ' + height[0].valueQuantity.unit;
